@@ -9,11 +9,11 @@
         style="width: 100%"
       >
         <el-table-column type="index" label="序号" align="center" width="60"></el-table-column>
-        <el-table-column prop="uuid" label="ID" align="center" width="320"></el-table-column>
-        <el-table-column prop="open_id" label="openid" align="center" width="260">
+
+        <el-table-column prop="nickName" label="昵称" align="center" width="120">
           <template slot-scope="scope">
-            <span>
-              <a href="javascript:;" style="color: #4db3ff">{{ scope.row.open_id }}</a>
+            <span style="color:#4db3ff">
+              <a href="javascript:;" style="color: #4db3ff" @click="toUserInfo(scope.row.open_id)">{{ scope.row.nickName }}</a>
             </span>
           </template>
         </el-table-column>
@@ -37,24 +37,27 @@
             <span>{{ scope.row.last_visit_time | dateFormat }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="nickName" label="昵称" align="center" width="120">
-          <template slot-scope="scope">
-            <span style="color:#4db3ff">{{ scope.row.nickName }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="gender" label="性别" align="center" width="220">
+        <el-table-column prop="gender" label="性别" align="center" width="60">
           <template slot-scope="scope">
             <span style="color:#4db3ff">{{ scope.row.gender | genderFormat }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="uuid" label="ID" align="center" width="320"></el-table-column>
+        <el-table-column prop="open_id" label="openid" align="center" width="260">
+          <template slot-scope="scope">
+            <span>
+              <a href="javascript:;" style="color: #4db3ff">{{ scope.row.open_id }}</a>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="operation" align="center" label="操作" fixed="right" width="180">
           <template slot-scope="scope">
-            <el-button type="warning" icon="edit" size="small" @click="onEditMoney(scope.row)">编辑</el-button>
+            <el-button type="warning" icon="edit" size="small" @click="$message.error('暂时不支持')">编辑</el-button>
             <el-button
               type="danger"
               icon="delete"
               size="small"
-              @click="onDeleteBook(scope.row,scope.$index)"
+              @click="onDeleteUser(scope.row,scope.$index)"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -99,11 +102,14 @@ export default {
     this.getUserList()
   },
   methods: {
+    toUserInfo(id){
+      this.$router.push(`/user/userinfo/${id}`)
+    },
     handleCurrentChange(page) {
 
     },
     handleSizeChange(page_size) {
-    this.paginations.page_size = page_size;
+      this.paginations.page_size = page_size;
 
     },
     getUserList() {
@@ -111,6 +117,9 @@ export default {
         console.log('res', res)
         this.userList = res.data.data.list
       })
+    },
+    onDeleteUser(row,index){
+      this.$message.error('暂不支持')
     }
   },
 

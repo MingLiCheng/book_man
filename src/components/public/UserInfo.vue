@@ -24,7 +24,8 @@ export default {
   },
   computed: {
     username(){
-      return localStorage.getItem('username')
+      // return localStorage.getItem('username') || ''
+      return 'admin'
     }
   },
 }

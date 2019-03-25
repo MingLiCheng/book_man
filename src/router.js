@@ -67,6 +67,11 @@ export default new Router({
               path: 'list',
               name: 'userlist',
               component: () => import('./views/app/user/UserList'),
+            },
+            {
+              path: 'userinfo/:userid',
+              name: 'userinfo',
+              component: () => import('./views/app/user/page/UserInfo.vue'),
             }
           ]
         },
