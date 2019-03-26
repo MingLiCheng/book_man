@@ -114,7 +114,6 @@ export default {
     },
     getUserList() {
       this.$axios.get('/api/user/userlist').then(res => {
-        console.log('res', res)
         this.userList = res.data.data.list
       })
     },

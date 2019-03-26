@@ -28,7 +28,7 @@
         <el-table-column prop="title" label="书名" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              <a :href="scope.row.id" style="color: #4db3ff">{{ scope.row.title }}</a>
+              <a  @click="toBookInfo(scope.row.id)" style="color: #4db3ff">{{ scope.row.title }}</a>
             </span>
           </template>
         </el-table-column>
@@ -214,10 +214,12 @@ export default {
       this.$axios.get('/api/getBooklistByKeyword', {
         params
       }).then(res => {
-        console.log('res', res)
         this.bookList = res.data.data.list
         this.paginations.total = 0
       })
+    },
+    toBookInfo(id) {
+      this.$router.push(`/book/detail/${id}`)
     }
   }
 };

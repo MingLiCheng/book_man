@@ -28,6 +28,11 @@ export default new Router({
               path: 'list',
               name: 'booklist',
               component: () => import('./views/app/book/BookList'),
+            },
+            {
+              path: 'detail/:bookid',
+              name: 'bookdetail',
+              component: () => import('./views/app/book/page/BookDetail.vue'),
             }
           ]
         },
@@ -41,7 +46,12 @@ export default new Router({
               path: 'list',
               name: 'commentlist',
               component: () => import('./views/app/comment/CommentList'),
-            }
+            },
+            {
+              path: 'detail/:commentId',
+              name: 'commentdetail',
+              component: () => import('./views/app/comment/page/CommentDetail.vue'),
+            },
           ]
         },
         {

@@ -30,7 +30,6 @@ export default {
                 title: '提醒',
                 content: '确定退出吗?',
                 onOk: () => {
-                    console.log('11')
                     localStorage.clear();
                     this.$router.push('/signin')
                 }

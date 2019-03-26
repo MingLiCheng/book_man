@@ -1,4 +1,6 @@
 module.exports = {
+    publicPath: '/bookMan/', //后缀与即将访问的一样
+    // outputDir: 'vue', //输出目录
     lintOnSave: false,
     devServer: {
         proxy: {

@@ -81,7 +81,6 @@ export default {
 				password: this.password
 			}
 			this.$axios.post('/api/user/login', userInfo).then( res => {
-				console.log('res', res)
 				if(res.data.code === 0) {
 					this.loginError = ''
 					if(this.isRemember) {
