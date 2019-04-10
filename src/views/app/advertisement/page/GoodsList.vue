@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import GoodsDialog from './public/GoodsDialog'
+import GoodsDialog from '../public/GoodsDialog'
 export default {
   components: { GoodsDialog },
   data() {
@@ -147,7 +147,12 @@ export default {
 
     },
     getGoodsList() {
-      this.$axios.get('/api/shop/goodslist').then(res => {
+      let params = {
+        typeId : 1
+      }
+      this.$axios.get('/api/adv/listByTypeId', {
+        params
+      }).then(res => {
         this.goodsList = res.data.data.list
         console.log('res', res)
       })

@@ -59,6 +59,15 @@ export default {
           path: "user",
           children: [{ path: "/user/list", name: "用户列表" }]
         },
+        {
+          icon: "team",
+          name: "广告管理",
+          path: "advertisement",
+          children: [
+            { path: "/advertisement/booklist", name: "书本广告" },
+            { path: "/advertisement/goodslist", name: "商品广告" },
+          ]
+        },
       ]
     }
   },

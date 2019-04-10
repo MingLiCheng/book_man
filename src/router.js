@@ -85,6 +85,24 @@ export default new Router({
             }
           ]
         },
+        {
+          path: 'advertisement',
+          name: 'advertisement',
+          component: () => import('./views/app/advertisement'),
+          redirect: 'advertisement/list',
+          children:[
+            {
+              path: 'booklist',
+              name: 'booklist',
+              component: () => import('./views/app/advertisement/page/BookList.vue'),
+            },
+            {
+              path: 'goodslist',
+              name: 'goodslist',
+              component: () => import('./views/app/advertisement/page/GoodsList.vue'),
+            }
+          ]
+        },
       ]
     },
     {

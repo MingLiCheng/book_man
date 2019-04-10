@@ -95,7 +95,9 @@ export default {
 					this.$router.push('/')
 
 				}else{
-					this.loginError = res.data;
+					this.loginError = res.data.data.msg;
+					console.log(this.loginError);
+
 				}
 			})
 		}
