@@ -72,6 +72,8 @@ export default {
     left: 10px;
     display: none;
     z-index: 2;
+    border-radius: 5px;
+    overflow: hidden;
     ul {
       padding: 0;
       margin: 0;

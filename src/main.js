@@ -24,6 +24,9 @@ Vue.filter('dateFormat', function (dateStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
 Vue.filter('genderFormat', function (dateStr) {
   return dateStr == 1 ? '男' : '女'
 })
+Vue.filter('priceFormat', function (dateStr) {
+  return dateStr.toFixed('2')
+})
 
 new Vue({
   router,

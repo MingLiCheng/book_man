@@ -15,7 +15,7 @@
           >筛选</el-button>
         </el-form-item>
         <el-form-item class="btnRight">
-          <el-button type="primary" size="small" icon="view" @click="onAddGood">添加</el-button>
+          <el-button type="primary" size="small" icon="view" @click="onAddGood">上架</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -27,9 +27,9 @@
         :default-sort="{prop: 'date', order: 'descending'}"
         style="width: 100%"
       >
-        <el-table-column type="index" label="序号" align="center" width="60"></el-table-column>
+        <el-table-column type="index" label="序号" align="center" width="80"></el-table-column>
 
-        <el-table-column prop="title" label="标题" align="center" width="320">
+        <el-table-column prop="title" label="标题" align="center" width="220">
           <template slot-scope="scope">
             <span style="color:#4db3ff">
               <a
@@ -39,33 +39,33 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="图片" align="center" width="320">
+        <el-table-column label="图片" align="center" width="140">
           <template slot-scope="scope">
             <img style="width: 60px; height: 75px; margin: 0 auto" :src="scope.row.image">
           </template>
         </el-table-column>
-        <el-table-column label="作者" align="center" width="400">
+        <el-table-column label="作者" align="center" width="300">
           <template slot-scope="scope">
             <span>{{ scope.row.author }}</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="价格" align="center" width="180">
+        <el-table-column label="价格" align="center" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.price }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="剩余数量" align="center" width="180">
+        <el-table-column label="剩余数量" align="center" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.number }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="商品id" align="center" width="180">
+        <el-table-column label="商品id" align="center" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.good_id }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="图书id" align="center" width="180">
+        <el-table-column label="图书id" align="center" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.book_id }}</span>
           </template>
@@ -82,8 +82,8 @@
               type="danger"
               icon="delete"
               size="small"
-              @click="onDeleteUser(scope.row,scope.$index)"
-            >删除</el-button>
+              @click="onDeleteGoods(scope.row,scope.$index)"
+            >下架</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,7 +110,7 @@
 </template>
 
 <script>
-import GoodsDialog from './public/GoodsDialog'
+import GoodsDialog from '../public/GoodsDialog'
 export default {
   components: { GoodsDialog },
   data() {
@@ -152,8 +152,17 @@ export default {
         console.log('res', res)
       })
     },
-    onDeleteUser(row, index) {
-      this.$message.error('暂不支持')
+    async onDeleteGoods(row, index) {
+      // this.$message.error('暂不支持')
+      const delres = await this.$axios.post('/api/shop/delgood', {
+        goodsId: row.good_id
+      })
+      if(delres.data.data.message=='SUCCESS') {
+        this.$message.success('下架成功')
+      }else{
+        this.$message.error('失败，发生位置错误')
+      }
+      this.getGoodsList()
     },
     showEditDialog(row, index) {
       this.dialog.show = true
@@ -192,4 +201,3 @@ export default {
   margin-top: 10px;
 }
 </style>
-

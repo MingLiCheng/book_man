@@ -51,7 +51,7 @@ axios.interceptors.response.use(response => {
         // 清除 token
         localStorage.removeItem('token')
         // 跳转到 登录页面
-        router.push('/')
+        router.push('/signin')
     }
     return Promise.reject(error)
 })

@@ -1,17 +1,17 @@
 <template>
   <div class="fillcontain">
     <div>
-       <el-form :inline="true" ref="search_data" :model="search_data">
+      <el-form :inline="true" ref="search_data" :model="search_data">
         <!-- <el-form-item label="书本筛选:">  -->
-          <!-- <el-date-picker v-model="search_data.startTime" type="datetime" placeholder="选择开始时间"></el-date-picker>--
-          <el-date-picker v-model="search_data.endTime" type="datetime" placeholder="选择结束时间"></el-date-picker> -->
-          <!-- <el-input v-model="keyword" placeholder="根据书名或者编码筛选"></el-input>
-        </el-form-item> -->
+        <!-- <el-date-picker v-model="search_data.startTime" type="datetime" placeholder="选择开始时间"></el-date-picker>--
+        <el-date-picker v-model="search_data.endTime" type="datetime" placeholder="选择结束时间"></el-date-picker>-->
+        <!-- <el-input v-model="keyword" placeholder="根据书名或者编码筛选"></el-input>
+        </el-form-item>-->
         <el-form-item>
           <!-- <el-button type="primary" size="small" icon="search" @keydown.enter="onSearchBook" @click="onSearchBook">筛选</el-button> -->
         </el-form-item>
         <el-form-item class="btnRight">
-          <el-button type="primary" size="small" icon="view"  @click="onAddMoney">添加</el-button>
+          <el-button type="primary" size="small" icon="view" @click="onAddGood">添加</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -28,7 +28,7 @@
         <el-table-column prop="title" label="书名" align="center" width="180">
           <template slot-scope="scope">
             <span>
-              <a  @click="toBookInfo(scope.row.id)" style="color: #4db3ff">{{ scope.row.title }}</a>
+              <a @click="toBookInfo(scope.row.id)" style="color: #4db3ff">{{ scope.row.title }}</a>
             </span>
           </template>
         </el-table-column>
@@ -50,7 +50,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="publisher" label="出版社" align="center" width="220"></el-table-column>
-        <el-table-column prop="pages" label="页数" align="center" width="220"></el-table-column>
+        <el-table-column prop="pages" label="页数" align="center" width="200"></el-table-column>
         <el-table-column prop="operation" align="center" label="操作" fixed="right" width="180">
           <template slot-scope="scope">
             <el-button type="warning" icon="edit" size="small" @click="onEditMoney(scope.row)">编辑</el-button>
@@ -82,19 +82,18 @@
       </el-row>
     </div>
     <!-- 弹框页面 -->
-    <!-- <DialogFound :dialog='dialog' :form='form' @update="getProfile"></DialogFound> -->
-    <dialog-section :dialog="dialog" :form="form" :getProfiles="getProfile"></dialog-section>
+    <GoodsDialog :dialog="dialog" :form="form"></GoodsDialog>
   </div>
 </template>
 
 <script>
-import DialogSection from "@/components/public/DialogSection";
+import GoodsDialog from "../public/GoodsDialog";
 
 export default {
   name: "infotab",
-  data() {
+  data () {
     return {
-      keyword:'',
+      keyword: '',
       bookList: [],
       tableData: [],
       allTableData: [],
@@ -128,13 +127,13 @@ export default {
     };
   },
   components: {
-    DialogSection
+    GoodsDialog
   },
-  created() {
-    this.getProfile({size: `${this.paginations.page_size}`, typeId: 0});
+  created () {
+    this.getProfile({ size: `${this.paginations.page_size}`, typeId: 0 });
   },
   methods: {
-    getProfile(params) {
+    getProfile (params) {
       // 获取表格数据
       this.$http.get("/api/adv/listByTypeId", {
         params,
@@ -143,35 +142,37 @@ export default {
         this.paginations.total = res.data.data.total
       });
     },
-    onEditMoney(row) {
-      // 编辑
-      this.dialog = {
-        show: true,
-        title: "编辑书籍信息",
-        option: "edit"
-      };
+    showEditDialog (row, index) {
+      this.dialog.show = true
+      this.dialog.operation = 'edit'
       this.form = {
-        id: row.id,
-        title: row.title,
-        image: row.image,
-        isbn: row.isbn,
-        author: row.author,
+        good_id: row.good_id,
+        book_price: row.book_price,
         price: row.price,
-        publisher: row.publisher,
-        pages: row.pages
-      };
+        number: row.number
+      }
     },
     // 删除
-    onDeleteBook(row, index) {
+    onDeleteBook (row, index) {
       this.$confirm({
-         title: '提醒',
-          content: '确定删除吗?',
-          onOk: () => {
-            this.$message.error('滚！ 不能删除')
+        title: '提醒',
+        content: '确定删除吗?',
+        onOk: async () => {
+          console.log('row', row);
+          
+          const res = await this.$axios.post('/api/adv/delByBookId', {
+            bookid: row.id
+          })
+          if(res.data.data.message == 'SUCCESS') {
+             this.$message.success("成功");
+            this.getProfile({ size: 5, typeId: 0 });
+          }else{
+             this.$message.success("失败， 联系管理员");
           }
+        }
       })
     },
-    onAddMoney() {
+    onAddMoney () {
       // 添加
       this.dialog = {
         show: true,
@@ -188,15 +189,22 @@ export default {
         id: ""
       };
     },
-    handleCurrentChange(page) {
-      this.getProfile({size: `${this.paginations.page_size}`, page: page-1})
+    handleCurrentChange (page) {
+      this.getProfile({ size: `${this.paginations.page_size}`, page: page - 1 })
     },
-    handleSizeChange(page_size) {
-    this.paginations.page_size = page_size;
-    this.getProfile({size: page_size})
+    handleSizeChange (page_size) {
+      this.paginations.page_size = page_size;
+      this.getProfile({ size: page_size })
     },
-    toBookInfo(id) {
+    toBookInfo (id) {
       this.$router.push(`/book/detail/${id}`)
+    },
+    onAddGood () {
+      this.dialog.show = true
+      this.dialog.operation = 'add'
+      this.form = {
+        number: 10
+      }
     }
   }
 };

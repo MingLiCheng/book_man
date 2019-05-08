@@ -1,11 +1,6 @@
 <template>
   <div class="comment-dialog-wrap">
-    <el-dialog
-      :title="dialog.title"
-      :visible.sync="dialog.show"
-      width="40%"
-      center:true
-    >
+    <el-dialog :title="dialog.title" :visible.sync="dialog.show" width="40%" center:true>
       <div class="form">
         <el-form
           ref="form"
@@ -14,12 +9,9 @@
           style="margin:10px auto;width:420px;"
           label-position="left"
         >
-          <el-form-item
-            v-if="dialog.operation === 'add'"
-            label="选择书本："
-          >
+          <el-form-item v-if="dialog.operation === 'add'" label="选择书本：">
             <el-select
-              v-model="bookinfo"
+              v-model="bookId"
               filterable
               remote
               placeholder="请输入关键词选择对应的书本"
@@ -30,45 +22,13 @@
                 v-for="item in filterBooks"
                 :key="item.value"
                 :label="item.title"
-                :value="item.value+'-s-'+ item.price"
+                :value="item.value"
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item
-            v-if="dialog.operation === 'add'"
-            label="售价："
-          >
-            <el-input
-              type="text"
-              v-model="form.price"
-            ></el-input>
-            <span>参考价格：{{ bookinfo.split('-s-')[1] }}</span>
-          </el-form-item>
-          <el-form-item
-            v-if="dialog.operation === 'edit'"
-            label="售价："
-          >
-            <el-input
-              type="text"
-              v-model="form.price"
-            ></el-input>
-            <span>参考价格：{{ form.book_price }}</span>
-          </el-form-item>
-          <el-form-item
-            label="数量："
-          >
-            <el-input
-              type="text"
-              v-model="form.number"
-            ></el-input>
-          </el-form-item>
-
           <el-form-item class="text_right">
             <el-button @click="dialog.show = false">取 消</el-button>
-            <el-button
-              type="primary"
-              @click="onSubmit('form')"
-            >提 交</el-button>
+            <el-button type="primary" @click="onSubmit('form')">提 交</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -83,50 +43,26 @@ export default {
     dialog: Object,
     form: Object
   },
-  data() {
+  data () {
     return {
       filterBooks: [],
       bookinfo: "",
-      loading: false
+      loading: false,
+      bookId: ''
     };
   },
-  mounted() {},
+  mounted () { },
   methods: {
-    onSubmit(formName) {
-      this.$refs[formName].validate(valid => {
+    onSubmit (formName) {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
-          if (this.dialog.operation === "add") {
-            let params = {
-              price: this.form.price,
-              book_id: this.bookinfo.split("-s-")[0],
-              number: this.form.number
-            };
-            console.log("添加商品params", params);
-            this.$axios.post("/api/shop/addgood", params).then(res => {
-              if (res.data.data.message === "SUCCESS") {
-                this.$message.success("成功");
-                this.dialog.show = false;
-                this.$parent.getGoodsList();
-              } else {
-                this.$message.error("失败");
-              }
-            });
-          } else {
-            let params = {
-              good_id: this.form.good_id,
-              price: this.form.price,
-              number: this.form.number
-            };
-            console.log("更新params", params);
-            this.$axios.post("/api/shop/editgood", params).then(res => {
-              if (res.data.data.message === "SUCCESS") {
-                this.$message.success("成功");
-                this.dialog.show = false;
-                this.$parent.getGoodsList();
-              } else {
-                this.$message.error("失败");
-              }
-            })
+          const res = await this.$axios.post('/api/adv/addByBookId', {
+            bookid: this.bookId
+          })
+          if (res.data.data.message == 'SUCCESS') {
+            this.$message.success("成功");
+            this.dialog.show = false;
+            this.$parent.getProfile({ size: 5, typeId: 0 });
           }
         } else {
           console.log("error submit!!");
@@ -134,10 +70,10 @@ export default {
         }
       });
     },
-    handleChange(value) {
+    handleChange (value) {
       console.log(value);
     },
-    remoteMethod(query) {
+    remoteMethod (query) {
       console.log("query", query);
       if (query !== "") {
         this.getBookMapByName(query);
@@ -145,7 +81,7 @@ export default {
         this.filterBooks = [];
       }
     },
-    getBookMapByName(query) {
+    getBookMapByName (query) {
       this.$axios
         .get("/api/book/bookmap", {
           params: {

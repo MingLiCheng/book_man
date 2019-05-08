@@ -58,12 +58,17 @@ export default new Router({
           path:'shop',
           name: 'shop',
           component: () => import('./views/app/shop'),
-          redirect: 'shop/list',
+          redirect: 'shop/goodslist',
           children:[
             {
-              path: 'list',
-              name: 'shoplist',
-              component: () => import('./views/app/shop/GoodsList'),
+              path: 'goodslist',
+              name: 'goodslist',
+              component: () => import('./views/app/shop/pages/GoodsList'),
+            },
+            {
+              path: 'orderlist',
+              name: 'orderlist',
+              component: () => import('./views/app/shop/pages/OrderList'),
             }
           ]
         },
@@ -77,6 +82,11 @@ export default new Router({
               path: 'list',
               name: 'userlist',
               component: () => import('./views/app/user/UserList'),
+            },
+            {
+              path: 'adminlist',
+              name: 'adminlist',
+              component: () => import('./views/app/user/page/AdminList'),
             },
             {
               path: 'userinfo/:userid',
@@ -93,12 +103,12 @@ export default new Router({
           children:[
             {
               path: 'booklist',
-              name: 'booklist',
+              name: 'advertisementbooklist',
               component: () => import('./views/app/advertisement/page/BookList.vue'),
             },
             {
               path: 'goodslist',
-              name: 'goodslist',
+              name: 'advgoodslist',
               component: () => import('./views/app/advertisement/page/GoodsList.vue'),
             }
           ]

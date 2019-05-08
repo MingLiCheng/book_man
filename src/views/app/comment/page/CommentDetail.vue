@@ -8,15 +8,15 @@
         </div>
         <div class="text item">
           <span>书名：</span>
-          {{ bookInfo.title }}
+          {{ issue.bookname }}
         </div>
         <div class="text item">
           <span>封面:</span>
-          <img class="bookImage" :src="bookInfo.image" alt>
+          <img class="bookImage" :src="issue.image" alt>
         </div>
         <div class="text item">
           <span>图书编码:</span>
-          {{ bookInfo.isbn }}
+          {{ issue.isbn }}
         </div>
       </el-card>
       <el-card class="box-card">
@@ -26,15 +26,15 @@
         </div>
         <div class="text item">
           <span>问题ID:</span>
-          {{ comment.comment_id }}
+          {{ issue.id }}
         </div>
         <div class="text item">
           <span>问题标题:</span>
-          {{ comment.title }}
+          {{ issue.title }}
         </div>
         <div class="text item">
           <p>问题主要内容:</p>
-          {{ comment.content }}
+          {{ issue.content }}
         </div>
       </el-card>
     </section>
@@ -45,19 +45,7 @@
           <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
         </div>
         <div class="text item">
-          <p>问题主要内容:</p>
-            <div v-for="(item, index) in comment.list" :key="index" class="childItem-box">
-                <p><span> {{ item.user_info.nickName }} </span><span class="user-openid" @click="toUserInfo(item.openid)"> {{ item.openid }} </span></p>
-                <p class="content-wrap">{{ item.content }}</p>
-                    <div v-for="(childItem, childIndex) in item.list" :key="childIndex" class="childchild-box">
-                        <p><span> {{ childItem.user_info.nickName }} </span><span class="user-openid" @click="toUserInfo(childItem.openid)"> {{ childItem.openid }} </span></p>
-                        <p class="content-wrap">{{ childItem.content}}</p>
-                        <div v-for="(childchildItem, childchildIndex) in childItem.list" :key="childchildIndex" class="childchildchild-box">
-                            <p><span> {{ childchildItem.user_info.nickName }} </span><span class="user-openid" @click="toUserInfo(childchildItem.openid)">  {{ childchildItem.openid }} </span></p>
-                            <p class="content-wrap">{{ childchildItem.content }}</p>
-                        </div>
-                    </div>
-            </div>
+          <Comment v-for="(item, index) in commentlist" :key="index" :commentInfo="item"></Comment>
         </div>
       </el-card>
     </section>
@@ -65,34 +53,39 @@
 </template>
 
 <script>
+import Comment from '../../../../components/public/Comment'
 export default {
-  data() {
+  components: { Comment },
+  data () {
     return {
-      comment: {},
-      bookInfo: {}
+      issue: {},
+      bookInfo: {},
+      commentlist:[]
     }
   },
-  created() {
-    this.getCommentDetailById()
+  created () {
+    this.getIssueDetailById()
   },
   methods: {
-    async getCommentDetailById() {
-      const detailRes = await this.$axios.get('/api/comment/detail', {
+    async getIssueDetailById () {
+      const detailRes = await this.$axios.get('/api/issue/detail', {
         params: {
-          commentId: this.$route.params.commentId
+          issueId: this.$route.params.commentId
         }
       })
-      this.comment = detailRes.data.data.info.list
+      this.issue = detailRes.data.data.detail
+      const commentInfo = await this.$axios.get('/api/comment/list', {
+        params: {
+          issue_id: this.issue.id
+        }
+      })
+      console.log('commentInfo', commentInfo);
+      this.commentlist = commentInfo.data.data.list
+      
 
-      const bookInfo = await this.$axios.get('/api/book/detail', {
-        params: {
-          id: this.comment.bookid
-        }
-      })
-      this.bookInfo = bookInfo.data.data
     },
-    toUserInfo(userid){
-        this.$router.push(`/user/userinfo/${userid}`)
+    toUserInfo (userid) {
+      this.$router.push(`/user/userinfo/${userid}`)
     }
   },
 
@@ -116,34 +109,6 @@ export default {
   .comment-info-box {
     .box-card {
       width: 580px;
-    }
-    .childItem-box{
-        border: 1px solid rgb(240, 158, 158);
-        border-radius: 5px;
-        padding: 5px;
-        margin: 5px 0px 5px 20px ;
-        p{
-            margin: 0;
-            padding: 0;
-        }
-        .content-wrap {
-            padding: 12px;
-        }
-        .user-openid {
-            color: rgb(85, 168, 236);
-            cursor: pointer;
-        }
-        // box-shadow: 2px 5px 10px rgb(231, 229, 229);
-        .childchild-box {
-            border: 1px solid rgb(136, 233, 133);
-            border-radius: 5px;
-            margin: 5px 0px 5px 20px ;
-            .childchildchild-box{
-                border: 1px solid rgb(102, 133, 235);
-                border-radius: 5px;
-                margin: 5px 0px 5px 20px ;
-            }
-        }
     }
   }
 

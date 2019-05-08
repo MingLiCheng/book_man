@@ -2,7 +2,7 @@
   <section>
     <div class="table_container">
       <el-table
-        :data="commentList"
+        :data="issueList"
         max-height="600"
         border
         :default-sort="{prop: 'date', order: 'descending'}"
@@ -24,12 +24,12 @@
         </el-table-column>
         <el-table-column label="简介" align="center" width="320">
           <template slot-scope="scope">
-            <span>{{ scope.row.summary }}</span>
+            <span>{{ scope.row.content.substring(0,30) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="相关书籍" align="center" width="180">
           <template slot-scope="scope">
-            <span>{{ scope.row.booktitle }}</span>
+            <span>{{ scope.row.bookname }}</span>
           </template>
         </el-table-column>
 
@@ -100,7 +100,7 @@ export default {
         show: false
       },
       form:{},
-      commentList: [],
+      issueList: [],
       //需要给分页组件传的信息
       paginations: {
         page_index: 1, // 当前位于哪页
@@ -112,7 +112,7 @@ export default {
     }
   },
   created() {
-    this.getCommentList()
+    this.getIssueList()
   },
   methods: {
     toUserInfo(id){
@@ -125,9 +125,9 @@ export default {
       this.paginations.page_size = page_size;
 
     },
-    getCommentList() {
-      this.$axios.get('/api/comment/list').then(res => {
-        this.commentList = res.data.data.list
+    getIssueList() {
+      this.$axios.get('/api/issue/list').then(res => {
+        this.issueList = res.data.data.list
       })
     },
     onDeleteUser(row,index){

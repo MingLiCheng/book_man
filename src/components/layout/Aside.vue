@@ -51,13 +51,19 @@ export default {
           icon: "shop",
           name: "商城管理",
           path: "shop",
-          children: [{ path: "/shop/list", name: "商品列表" }]
+          children: [
+            { path: "/shop/goodslist", name: "商品列表" },
+            { path: "/shop/orderlist", name: "订单列表" }
+            ]
         },
         {
           icon: "team",
           name: "用户管理",
           path: "user",
-          children: [{ path: "/user/list", name: "用户列表" }]
+          children: [
+            { path: "/user/list", name: "用户列表" },
+            { path: "/user/adminlist", name: "管理员列表" },
+            ]
         },
         {
           icon: "team",

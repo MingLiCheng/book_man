@@ -1,7 +1,7 @@
 <template>
     <section class="header-wrap">
         <div class="left-wrap">
-            <h1 class="title">平台管理系统</h1>
+            <h1 class="title">思多多后台管理系统</h1>
         </div>
         <div class="right-wrap">
             <div class="userInfo-box">
@@ -47,7 +47,7 @@ export default {
     display: flex;
     justify-content: space-between;
     .left-wrap{
-        width: 20%;
+        width: 30%;
         height: 100%;
         margin: 0 20px;
         line-height: 80px;
