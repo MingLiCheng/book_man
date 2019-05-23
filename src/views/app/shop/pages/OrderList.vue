@@ -34,12 +34,14 @@
             <span v-if="scope.row.trade_status == 1" style="color: red;">待发货</span>
             <span v-if="scope.row.trade_status == 2" style="color: blue;">待收货</span>
             <span v-if="scope.row.trade_status == 3" style="color: green;">已完成</span>
+            <span v-if="scope.row.trade_status == -1" style="color: hotpink;">订单取消</span>
           </template>
         </el-table-column>
         <el-table-column prop="pay_status" label="支付状态" align="center" width="160">
           <template slot-scope="scope">
             <span v-if="scope.row.pay_status == '0'" style="color: black;">未支付</span>
             <span v-if="scope.row.pay_status == '1'" style="color: green;">已支付</span>
+            <span v-if="scope.row.pay_status == '-1'" style="color: hotpink;">退款</span>
           </template>
         </el-table-column>
         <el-table-column prop="order_amount" label="订单金额" align="center" width="160">
@@ -71,7 +73,6 @@
               icon="edit"
               size="small"
             >取消订单</el-button>
-            <el-button type="danger" icon="edit" size="small">测试</el-button>
           </template>
         </el-table-column>
       </el-table>

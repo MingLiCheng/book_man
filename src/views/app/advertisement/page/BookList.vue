@@ -15,6 +15,7 @@
         </el-form-item>
       </el-form>
     </div>
+    <h2>图书列表管理</h2>
     <div class="table_container">
       <el-table
         :data="bookList"
@@ -53,7 +54,73 @@
         <el-table-column prop="pages" label="页数" align="center" width="200"></el-table-column>
         <el-table-column prop="operation" align="center" label="操作" fixed="right" width="180">
           <template slot-scope="scope">
-            <el-button type="warning" icon="edit" size="small" @click="onEditMoney(scope.row)">编辑</el-button>
+            <el-button
+              type="danger"
+              icon="delete"
+              size="small"
+              @click="onDeleteBook(scope.row,scope.$index)"
+            >删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <el-row>
+        <el-col :span="24">
+          <div class="pagination">
+            <el-pagination
+              v-if="paginations.total > 0"
+              :page-sizes="paginations.page_sizes"
+              :page-size="paginations.page_size"
+              :layout="paginations.layout"
+              :total="paginations.total"
+              :current-page.sync="paginations.page_index"
+              @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
+            ></el-pagination>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <hr>
+    <h2>轮播图广告管理</h2>
+    <div class="table_container">
+      <el-table
+        :data="bookListForLunBo"
+        max-height="600"
+        border
+        :default-sort="{prop: 'date', order: 'descending'}"
+        style="width: 100%"
+      >
+        <el-table-column type="index" label="序号" align="center" width="60"></el-table-column>
+        <el-table-column prop="id" label="ID" align="center" width="60"></el-table-column>
+        <el-table-column prop="title" label="书名" align="center" width="180">
+          <template slot-scope="scope">
+            <span>
+              <a @click="toBookInfo(scope.row.id)" style="color: #4db3ff">{{ scope.row.title }}</a>
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="image" label="图片" align="center" width="160">
+          <template slot-scope="scope">
+            <img
+              style="width: 60px; height: 75px; margin: 0 auto"
+              :src="scope.row.image"
+              alt
+              srcset
+            >
+          </template>
+        </el-table-column>
+        <el-table-column prop="isbn" label="书本条形码" align="center" width="150"></el-table-column>
+        <el-table-column prop="author" label="作者" align="center" width="180"></el-table-column>
+        <el-table-column prop="price" label="价格" align="center" width="120">
+          <template slot-scope="scope">
+            <span style="color:#4db3ff">{{ scope.row.price }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="publisher" label="出版社" align="center" width="220"></el-table-column>
+        <el-table-column prop="pages" label="页数" align="center" width="200"></el-table-column>
+        <el-table-column prop="operation" align="center" label="操作" fixed="right" width="180">
+          <template slot-scope="scope">
             <el-button
               type="danger"
               icon="delete"
@@ -82,12 +149,12 @@
       </el-row>
     </div>
     <!-- 弹框页面 -->
-    <GoodsDialog :dialog="dialog" :form="form"></GoodsDialog>
+    <BookDialog :dialog="dialog" :form="form"></BookDialog>
   </div>
 </template>
 
 <script>
-import GoodsDialog from "../public/GoodsDialog";
+import BookDialog from "../public/BookDialog";
 
 export default {
   name: "infotab",
@@ -95,6 +162,7 @@ export default {
     return {
       keyword: '',
       bookList: [],
+      bookListForLunBo: [],
       tableData: [],
       allTableData: [],
       filterTableData: [],
@@ -127,7 +195,7 @@ export default {
     };
   },
   components: {
-    GoodsDialog
+    BookDialog
   },
   created () {
     this.getProfile({ size: `${this.paginations.page_size}`, typeId: 0 });
@@ -159,15 +227,15 @@ export default {
         content: '确定删除吗?',
         onOk: async () => {
           console.log('row', row);
-          
+
           const res = await this.$axios.post('/api/adv/delByBookId', {
             bookid: row.id
           })
-          if(res.data.data.message == 'SUCCESS') {
+          if(res.data.data.msg == 'SUCCESS') {
              this.$message.success("成功");
             this.getProfile({ size: 5, typeId: 0 });
           }else{
-             this.$message.success("失败， 联系管理员");
+             this.$message.error("失败， 联系管理员");
           }
         }
       })

@@ -92,6 +92,7 @@ export default {
                         Utils.setCookie('wxbookman', cryptoStr);
 					}
 					localStorage.setItem('token', res.data.data.token)
+					localStorage.setItem('userInfo', JSON.stringify(res.data.data.userInfo))
 					this.$router.push('/')
 
 				}else{

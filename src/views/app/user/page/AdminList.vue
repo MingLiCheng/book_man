@@ -23,8 +23,15 @@
       >
         <el-table-column type="index" label="序号" align="center" width="100"></el-table-column>
         <el-table-column prop="user_id" label="ID" align="center" width="100"></el-table-column>
+        <el-table-column prop="avatar" label="头像" align="center" width="100">
+          <template slot-scope="scope">
+            <div class="avatar-box">
+              <img :src="scope.row.avatar" alt srcset>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="username" label="姓名" align="center" width="160"></el-table-column>
-        <el-table-column prop="username" label="邮箱" align="center" width="180">
+        <el-table-column prop="email" label="邮箱" align="center" width="180">
           <template slot-scope="scope">
             <span>
               <a @click="toBookInfo(scope.row.email)" style="color: #4db3ff">{{ scope.row.email }}</a>
@@ -67,9 +74,9 @@ import AddAdminDialog from "@/components/public/AddAdminDialog";
 
 export default {
   name: "infotab",
-  data () {
+  data() {
     return {
-      keyword: '',
+      keyword: "",
       adminlist: [],
       dialog: {
         show: false,
@@ -77,10 +84,10 @@ export default {
         option: "edit"
       },
       form: {
-        username: '',
-        email: '',
-        password: '',
-        tel: '',
+        username: "",
+        email: "",
+        password: "",
+        tel: ""
       },
       //需要给分页组件传的信息
       paginations: {
@@ -93,23 +100,23 @@ export default {
       search_data: {
         startTime: "",
         endTime: ""
-      },
+      }
     };
   },
   components: {
     AddAdminDialog
   },
-  created () {
-    this.getAdminList()
+  created() {
+    this.getAdminList();
   },
   methods: {
     // 获取管理员列表
-    async getAdminList () {
+    async getAdminList() {
       // 获取表格数据
-      const admins = await this.$axios.get("/api/admin/list")
-      this.adminlist = admins.data.data.admins
+      const admins = await this.$axios.get("/api/admin/list");
+      this.adminlist = admins.data.data.admins;
     },
-    onEditAdmin (row) {
+    onEditAdmin(row) {
       // 编辑
       this.dialog = {
         show: true,
@@ -125,24 +132,24 @@ export default {
       };
     },
     // 删除
-    onDeleteAdmin (adminid, index) {
+    onDeleteAdmin(adminid, index) {
       this.$confirm({
-        title: '提醒',
-        content: '确定删除吗?',
+        title: "提醒",
+        content: "确定删除吗?",
         onOk: async () => {
-          const res = await this.$axios.post('/api/admin/delById', {
+          const res = await this.$axios.post("/api/admin/delById", {
             user_id: adminid
-          })
-          if (res.data.data.message == 'SUCCESS') {
-            this.$message.success('删除成功')
-            this.getAdminList()
+          });
+          if (res.data.data.message == "SUCCESS") {
+            this.$message.success("删除成功");
+            this.getAdminList();
           } else {
-            this.$message.error('删除失败')
+            this.$message.error("删除失败");
           }
         }
-      })
+      });
     },
-    onAddAdmin () {
+    onAddAdmin() {
       // 添加
       this.dialog = {
         show: true,
@@ -159,34 +166,33 @@ export default {
         id: ""
       };
     },
-    async changeAuthority (row) {
-      console.log('1');
-      
-      let res
+    async changeAuthority(row) {
+      console.log("1");
+
+      let res;
       if (row.authority == 1) {
-        res = await this.$axios.post('/api/admin/editById', {
+        res = await this.$axios.post("/api/admin/editById", {
           user_id: row.user_id,
           authority: 0
-        })
+        });
       } else {
-        res = await this.$axios.post('/api/admin/editById', {
+        res = await this.$axios.post("/api/admin/editById", {
           user_id: row.user_id,
           authority: 1
-        })
+        });
       }
-      if(res.data.data.message == 'SUCCESS') {
-        this.$message.success = '成功'
-        this.getAdminList()
-      }else{
-        this.$message.error = '失败'
-        this.getAdminList()
+      if (res.data.data.message == "SUCCESS") {
+        this.$message.success = "成功";
+        this.getAdminList();
+      } else {
+        this.$message.error = "失败";
+        this.getAdminList();
       }
-
     }
   }
 };
 </script>
-<style scoped>
+<style lang="less" scoped>
 .fillcontain {
   width: 100%;
   height: 100%;
@@ -199,5 +205,13 @@ export default {
 .pagination {
   text-align: right;
   margin-top: 10px;
+}
+.avatar-box{
+  img {
+    max-width:60px;
+    max-height: 80px;
+    width: auto;
+    height: auto;
+  }
 }
 </style>

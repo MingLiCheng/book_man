@@ -1,10 +1,10 @@
 <template>
   <section class="userinfo-wrap">
     <div class="avatar-box">
-      <img src="@/assets/images/logo.png" alt>
+      <img :src="userInfo.avatar" alt>
     </div>
     <div class="username-box">
-      <span>测试名字</span>
+      <span>{{userInfo.username}}</span>
     </div>
     <div class="drop-menu">
       <ul>
@@ -17,16 +17,21 @@
 
 <script>
 export default {
+  data() {
+    return {
+      userInfo:{}
+    }
+  },
+  created() {
+    this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  },
+  computed: {
+     
+  },
   methods: {
     logOut(){
       this.$parent.quite()
     },
-  },
-  computed: {
-    username(){
-      // return localStorage.getItem('username') || ''
-      return 'admin'
-    }
   },
 }
 </script>

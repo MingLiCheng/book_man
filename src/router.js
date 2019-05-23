@@ -113,6 +113,19 @@ export default new Router({
             }
           ]
         },
+        {
+          path: 'me',
+          name: 'me',
+          component: () => import('./views/app/me'),
+          redirect: 'me/info',
+          children:[
+            {
+              path: 'info',
+              name: 'meinfo',
+              component: () => import('./views/app/me/pages/Info.vue'),
+            }
+          ]
+        },
       ]
     },
     {

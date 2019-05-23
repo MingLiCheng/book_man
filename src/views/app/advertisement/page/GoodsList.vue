@@ -105,14 +105,11 @@
         </el-col>
       </el-row>
     </div>
-    <GoodsDialog :dialog="dialog" :form="form"></GoodsDialog>
   </section>
 </template>
 
 <script>
-import GoodsDialog from '../public/GoodsDialog'
 export default {
-  components: { GoodsDialog },
   data() {
     return {
       keyword:'',

@@ -127,8 +127,11 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="24">
+      <el-col :span="12">
         <line-echarts id="lineEcharts" height="300px" ref="echarts"></line-echarts>
+      </el-col>
+      <el-col :span="12">
+        <LineEchartsForAdv id="lineEchartsforadv" height="300px" ref="echarts"></LineEchartsForAdv>
       </el-col>
     </el-row>
     <el-row>
@@ -167,7 +170,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="operation" align="center" label="操作" fixed="right" width="160">
+            <el-table-column prop="operation" align="center" label="操作" fixed="right" width="230">
               <template slot-scope="scope">
                 <el-button
                   type="primary"
@@ -175,12 +178,15 @@
                   size="small"
                   @click="openFahuo(scope.row.order_id)"
                 >发货</el-button>
-                <el-button
-                  type="primary"
-                  icon="edit"
-                  size="small"
-                  @click="openFahuo(scope.row.order_id)"
-                >发货</el-button>
+                <a-popconfirm
+                  title="确定取消订单？"
+                  @confirm="cancelOrder(scope.row.order_id)"
+                  @cancel="cancel"
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <el-button type="danger" icon="edit" size="small">取消订单</el-button>
+                </a-popconfirm>
               </template>
             </el-table-column>
           </el-table>
@@ -191,12 +197,13 @@
 </template>
 
 <script>
-import LineEcharts from '../../../components/assets/ECharts/lineEcharts'
-import { Message } from 'element-ui'
+import LineEcharts from "../../../components/assets/ECharts/lineEcharts";
+import LineEchartsForAdv from "../../../components/assets/ECharts/lineEchartsForAdv";
+import { Message } from "element-ui";
 export default {
-  name: 'mainIndex',
-  components: { LineEcharts },
-  data () {
+  name: "mainIndex",
+  components: { LineEcharts, LineEchartsForAdv },
+  data() {
     return {
       orderlist: [],
       allNumber: 0,
@@ -204,86 +211,98 @@ export default {
       noFahuoNumber: 0,
       noShouhuoNumber: 0,
       loading: false,
-      allPayPrice: 0,
-    }
+      allPayPrice: 0
+    };
   },
-  created () {
-    // this.getOrderListByTradeStatus()
-  },
-  mounted () {
-    // setInterval(() => {
-    this.selfAdaption()
-    this.getOrderTotalInfo()
-    this.getOrderListByTradeStatus()
-
-    // }, 1000);
-    // this.selfAdaption()
-    // this.getOrderTotalInfo()
+  mounted() {
+    this.selfAdaption();
+    this.getOrderTotalInfo();
+    this.getOrderListByTradeStatus();
   },
   methods: {
-    shuxin () {
-      this.selfAdaption()
-      this.getOrderTotalInfo()
-      this.getOrderListByTradeStatus()
+    cancel() {
+      return false;
+    },
+    shuxin() {
+      this.selfAdaption();
+      this.getOrderTotalInfo();
+      this.getOrderListByTradeStatus();
     },
     // echart自适应
-    selfAdaption () {
-      let that = this
+    selfAdaption() {
+      let that = this;
       setTimeout(() => {
-        window.onresize = function () {
+        window.onresize = function() {
           if (that.$refs.echarts) {
-            that.$refs.echarts.chart.resize()
+            that.$refs.echarts.chart.resize();
           }
-        }
-      }, 10)
+        };
+      }, 10);
     },
-    async getOrderListByTradeStatus () {
-      const orders = await this.$axios.post('/api/order/list', {
-        trade_status: '1' //已经支付的订单--等待发货
-      })
-      this.orderlist = orders.data.data.list
+    async getOrderListByTradeStatus() {
+      const orders = await this.$axios.post("/api/order/list", {
+        trade_status: "1" //已经支付的订单--等待发货
+      });
+      this.orderlist = orders.data.data.list;
     },
     // 获取订单的数量信息
-    async getOrderTotalInfo () {
-      const info = await this.$axios.get('/api/order/info/orderTotal')
-      this.allNumber = info.data.data.all
-      this.noPayNumber = info.data.data.noPay
-      this.noFahuoNumber = info.data.data.noFahuo
-      this.noShouhuoNumber = info.data.data.noShouhuo
-      this.allPayPrice = info.data.data.payPrice
+    async getOrderTotalInfo() {
+      const info = await this.$axios.get("/api/order/info/orderTotal");
+      this.allNumber = info.data.data.all;
+      this.noPayNumber = info.data.data.noPay;
+      this.noFahuoNumber = info.data.data.noFahuo;
+      this.noShouhuoNumber = info.data.data.noShouhuo;
+      this.allPayPrice = info.data.data.payPrice;
     },
-    openFahuo (order_id) {
-      this.$prompt('请输入邮箱', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+    openFahuo(order_id) {
+      this.$prompt("请输入运单号", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
         // inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
         // inputErrorMessage: '邮箱格式不正确'
         inputPattern: /\d{10}/,
-        inputErrorMessage: '请输入10位数字'
-      }).then(({ value }) => {
-        this.loading = true
-        setTimeout(async () => {
-          // 改变状态
-          const res = await this.$axios.post('/api/order/editStatus', {
-            trade_status: '2', //已发货
-            order_id
-          })
-          if (res.data.data.message == 'SUCCESS') {
-            Message.success('发货成功')
-          } else {
-            Message.error('失败，未知错误')
-          }
-          this.loading = false
-          this.getOrderListByTradeStatus()
-          this.getOrderTotalInfo()
-        }, 1000);
-      }).catch(() => {
-        console.log('this', this);
-        Message.info('取消输入')
+        inputErrorMessage: "请输入10位数字"
+      })
+        .then(({ value }) => {
+          this.loading = true;
+          setTimeout(async () => {
+            // 改变状态
+            const res = await this.$axios.post("/api/order/editStatus", {
+              trade_status: "2", //已发货
+              order_id
+            });
+            if (res.data.data.message == "SUCCESS") {
+              Message.success("发货成功");
+            } else {
+              Message.error("失败，未知错误");
+            }
+            this.loading = false;
+            this.getOrderListByTradeStatus();
+            this.getOrderTotalInfo();
+          }, 1000);
+        })
+        .catch(() => {
+          console.log("this", this);
+          Message.info("取消输入");
+        });
+    },
+    async cancelOrder(order_id) {
+      console.log("取消订单", order_id);
+      const res = await this.$axios.post("/api/order/editStatus", {
+        trade_status: "-1", // 取消
+        pay_status: "-1", // 取消
+        order_id
       });
+      if (res.data.data.message == "SUCCESS") {
+        Message.success("发货成功");
+      } else {
+        Message.error("失败，未知错误");
+      }
+      this.getOrderListByTradeStatus();
+      this.getOrderTotalInfo();
     }
   }
-}
+};
 </script>
 
 <style lang="less">
@@ -436,6 +455,22 @@ export default {
     }
   }
   #lineEcharts {
+    margin-top: 30px;
+    padding-top: 30px;
+    background: #fff;
+    border-radius: 5px;
+    -webkit-box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.2);
+    .title {
+      font-size: 14px;
+      padding: 10px;
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+  #lineEchartsforadv {
     margin-top: 30px;
     padding-top: 30px;
     background: #fff;

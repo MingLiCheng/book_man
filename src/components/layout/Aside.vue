@@ -66,7 +66,7 @@ export default {
             ]
         },
         {
-          icon: "team",
+          icon: "crown",
           name: "广告管理",
           path: "advertisement",
           children: [

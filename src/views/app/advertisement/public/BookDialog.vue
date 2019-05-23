@@ -43,26 +43,29 @@ export default {
     dialog: Object,
     form: Object
   },
-  data () {
+  data() {
     return {
       filterBooks: [],
       bookinfo: "",
       loading: false,
-      bookId: ''
+      bookId: ""
     };
   },
-  mounted () { },
+  mounted() {},
   methods: {
-    onSubmit (formName) {
+    onSubmit(formName) {
       this.$refs[formName].validate(async valid => {
         if (valid) {
-          const res = await this.$axios.post('/api/adv/addByBookId', {
+          const res = await this.$axios.post("/api/adv/addByBookId", {
             bookid: this.bookId
-          })
-          if (res.data.data.message == 'SUCCESS') {
+          });
+          if (res.data.data.msg === "SUCCESS") {
             this.$message.success("成功");
             this.dialog.show = false;
             this.$parent.getProfile({ size: 5, typeId: 0 });
+          } else {
+            this.dialog.show = false;
+            this.$message.error("该书本已经存在");
           }
         } else {
           console.log("error submit!!");
@@ -70,10 +73,10 @@ export default {
         }
       });
     },
-    handleChange (value) {
+    handleChange(value) {
       console.log(value);
     },
-    remoteMethod (query) {
+    remoteMethod(query) {
       console.log("query", query);
       if (query !== "") {
         this.getBookMapByName(query);
@@ -81,7 +84,7 @@ export default {
         this.filterBooks = [];
       }
     },
-    getBookMapByName (query) {
+    getBookMapByName(query) {
       this.$axios
         .get("/api/book/bookmap", {
           params: {

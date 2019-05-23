@@ -29,21 +29,31 @@
       }
     },
     mounted() {
+        // 计算设备的dpr
+        // function setupCanvas(canvas) {
+        //   var dpr = (scale = window.devicePixelRatio || 1);
+        //   var rect = canvas.getBoundingClientRect();
+        //   canvas.width = rect.width * dpr;
+        //   canvas.height = rect.height * dpr;
+        //   canvas.style.width = rect.width + "px"
+        //   canvas.style.height = rect.height + "px"
+        //   return canvas;
+        // }
       this.initChart()
     },
     methods: {
       initChart() {
-        this.chart = echarts.init(document.getElementById(this.id),'westeros')
+        this.chart = echarts.init(document.getElementById(this.id), 'westeros')
 
         this.chart.setOption({
           title: {
-            text: '访问量与成交量曲线'
+            text: '广告推荐收益曲线'
           },
           tooltip: {
             trigger: 'axis'
           },
           legend: {
-            data:['访问量','商品销量']
+            data:['广告访问量','推荐访问量']
           },
           grid: {
             left: '3%',
@@ -66,16 +76,16 @@
           },
           series: [
             {
-              name:'访问量',
+              name:'广告访问量',
               type:'line',
               stack: '总量',
-              data:[1200, 2320, 3010, 4340, 3400, 4500, 5100]
+              data:[2500, 4302, 5010, 2540, 6900, 5300, 6410]
             },
             {
-              name:'商品销量',
+              name:'推荐访问量',
               type:'line',
               stack: '总量',
-              data:[2200, 3820, 1910, 2340, 4900, 3300, 1100]
+              data:[5320, 7332, 9301, 6334, 5390, 4330, 1320]
             }
           ]
         })
