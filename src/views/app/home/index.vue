@@ -16,7 +16,7 @@
               </router-link>
             </li>
             <li>
-              <router-link to="/shop/list" class="kjfs kjfs-pinkk">
+              <router-link to="/shop/goodslist" class="kjfs kjfs-pinkk">
                 <span>
                   <i style="font-size: 40px;" class="el-icon-goods"></i>
                 </span>
